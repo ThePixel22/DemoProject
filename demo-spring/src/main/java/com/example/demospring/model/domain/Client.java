@@ -1,14 +1,15 @@
 package com.example.demospring.model.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 
 @Table(name = "CLIENT")
+@Entity
 public class Client {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "CLIENT")
+    @SequenceGenerator(sequenceName = "SEQ_CLIENT", allocationSize = 1, name = "CLIENT")
     @Column(name = "RECORD_NO")
     private Long recordNo;
 
