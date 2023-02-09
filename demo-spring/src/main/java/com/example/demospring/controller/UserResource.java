@@ -5,11 +5,13 @@ import com.example.demospring.model.SignInBean;
 import com.example.demospring.model.SignUpBean;
 import com.example.demospring.model.domain.Client;
 import com.example.demospring.repositories.ClientRepository;
+import com.example.demospring.security.JwtTokenUtil;
 import com.example.demospring.util.PasswordEncoder;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,11 +24,21 @@ public class UserResource {
     @Autowired
     ClientRepository clientRepository;
 
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
+
     @PostMapping("/signUp")
     public ResponseEntity<ResultData> signUp(@RequestBody SignUpBean request){
         if(!request.getConfirmPassword().equals(request.getPassword())) {
             ResultData resultData = new ResultData();
             resultData.setErrorMessage("error! Password don't match!");
+            resultData.setErrorCode("E501");
+            return ResponseEntity.ok().body(resultData);
+        }
+
+        if(clientRepository.existsByUserNameAndStatus(request.getUserName(), "A")){
+            ResultData resultData = new ResultData();
+            resultData.setErrorMessage("error! User name is exists!");
             resultData.setErrorCode("E501");
             return ResponseEntity.ok().body(resultData);
         }
@@ -60,10 +72,12 @@ public class UserResource {
         }
 
         if(PasswordEncoder.matches(request.getPassword(),client.getPassword())){
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(client.getPassword(), "");
+            String jwt = jwtTokenUtil.createToken(authenticationToken, false);
             ResultData resultData = new ResultData();
             resultData.setErrorMessage("ok");
             resultData.setErrorCode("00");
-            resultData.setData(client);
+            resultData.setData(jwt);
             return ResponseEntity.ok(resultData);
         } else {
             ResultData resultData = new ResultData();
