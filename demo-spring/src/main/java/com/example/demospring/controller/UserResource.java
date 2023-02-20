@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,7 +73,7 @@ public class UserResource {
         }
 
         if(PasswordEncoder.matches(request.getPassword(),client.getPassword())){
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(client.getPassword(), "");
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(client.getUserName(), client.getPassword());
             String jwt = jwtTokenUtil.createToken(authenticationToken, false);
             ResultData resultData = new ResultData();
             resultData.setErrorMessage("ok");
@@ -85,5 +86,11 @@ public class UserResource {
             resultData.setErrorCode("E503");
             return ResponseEntity.ok().body(resultData);
         }
+    }
+
+    @GetMapping("/ping")
+    public String ping(){
+
+       return "ok";
     }
 }
