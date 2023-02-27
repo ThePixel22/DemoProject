@@ -90,7 +90,6 @@ public class UserResource {
 
     @GetMapping("/ping")
     public String ping(){
-
        return "ok";
     }
 }
