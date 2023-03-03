@@ -1,11 +1,13 @@
 package com.example.demospring.controller;
 
+import com.example.demospring.model.Location;
 import com.example.demospring.model.ResultData;
 import com.example.demospring.model.SignInBean;
 import com.example.demospring.model.SignUpBean;
 import com.example.demospring.model.domain.Client;
 import com.example.demospring.repositories.ClientRepository;
 import com.example.demospring.security.JwtTokenUtil;
+import com.example.demospring.util.GeoUtil;
 import com.example.demospring.util.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -91,5 +93,11 @@ public class UserResource {
     @GetMapping("/ping")
     public String ping(){
        return "ok";
+    }
+
+    @GetMapping("/getLocation")
+    public String getLocation(){
+        Location location = GeoUtil.getLatLongByAddress("CIC tower");
+        return location.getLat() + " " +location.getLng();
     }
 }

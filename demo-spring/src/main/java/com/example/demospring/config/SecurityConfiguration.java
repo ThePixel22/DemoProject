@@ -23,7 +23,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/signIn","/signUp").permitAll()
+                .authorizeRequests().antMatchers("/signIn","/signUp","/ping").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
